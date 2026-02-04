@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Intelligence Platform - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1><i class="fas fa-shield-alt"></i> Threat Intelligence Platform</h1>
+            <p class="subtitle">by Aakash Gujja</p>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="stats-section">
+            <h2>IOC Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.total }}</h3>
+                        <p>Total IOCs</p>
+                    </div>
+                </div>
+
+                {% for ioc_type, count in stats.by_type.items() %}
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        {% if ioc_type == 'IP' %}
+                            <i class="fas fa-network-wired"></i>
+                        {% elif ioc_type == 'Domain' %}
+                            <i class="fas fa-globe"></i>
+                        {% elif ioc_type == 'Hash' %}
+                            <i class="fas fa-fingerprint"></i>
+                        {% else %}
+                            <i class="fas fa-link"></i>
+                        {% endif %}
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ count }}</h3>
+                        <p>{{ ioc_type }}s</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="sources-section">
+            <h2>Threat Sources</h2>
+            <div class="sources-grid">
+                {% for source, count in stats.by_source.items() %}
+                <div class="source-card">
+                    <i class="fas fa-rss"></i>
+                    <h3>{{ source }}</h3>
+                    <p>{{ count }} IOCs</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="iocs-section">
+            <h2>Recent IOCs</h2>
+            <div class="table-container">
+                <table class="ioc-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Value</th>
+                            <th>Source</th>
+                            <th>Confidence</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ioc in iocs %}
+                        <tr>
+                            <td><span class="badge badge-{{ ioc[1]|lower }}">{{ ioc[1] }}</span></td>
+                            <td class="ioc-value">{{ ioc[2] }}</td>
+                            <td>{{ ioc[3] }}</td>
+                            <td>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: {{ ioc[5] }}%"></div>
+                                    <span>{{ ioc[5] }}%</span>
+                                </div>
+                            </td>
+                            <td class="timestamp">{{ ioc[4] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Aakash Gujja | <a href="https://github.com/Blackk-Lotus" target="_blank">GitHub</a> | <a href="https://linkedin.com/in/aakash-g-a27039182" target="_blank">LinkedIn</a></p>
+    </footer>
+</body>
+</html>
